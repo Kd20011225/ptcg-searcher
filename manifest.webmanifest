@@ -1,0 +1,19 @@
+{
+  "name": "宝可梦卡牌查卡器",
+  "short_name": "查卡器",
+  "lang": "zh-CN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f3ed",
+  "theme_color": "#f5f3ed",
+  "description": "按卡名、效果、属性和系列查询宝可梦卡牌。",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
