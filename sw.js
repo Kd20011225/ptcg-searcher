@@ -1,9 +1,9 @@
-const VERSION = 'ptcg-searcher-5f3012b0d37052f1'
+const VERSION = 'ptcg-searcher-febb84e539a58523'
 const CACHE_PREFIX = 'ptcg-searcher:' + new URL(self.registration.scope).pathname + ':'
 const APP_CACHE = CACHE_PREFIX + VERSION + '-app'
 const DATA_CACHE = CACHE_PREFIX + VERSION + '-data'
 const IMAGE_CACHE = CACHE_PREFIX + 'images-v1'
-const APP_FILES = ["/", "/manifest.webmanifest", "/icon.svg", "/assets/index-BInG9NGt.css", "/assets/index-zHUnPumX.js"]
+const APP_FILES = ["/", "/manifest.webmanifest", "/icon.svg", "/assets/index-DH5X0C1G.css", "/assets/index-DPqQS86p.js"]
 
 function scopedUrl(path) {
   return new URL(path.replace(/^\/+/, ''), self.registration.scope).href
