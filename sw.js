@@ -1,9 +1,8 @@
-const VERSION = 'ptcg-searcher-0f9bfbfca3596c2b'
+const VERSION = 'ptcg-searcher-b71b57cae39c1f6a'
 const CACHE_PREFIX = 'ptcg-searcher:' + new URL(self.registration.scope).pathname + ':'
 const APP_CACHE = CACHE_PREFIX + VERSION + '-app'
-const DATA_CACHE = CACHE_PREFIX + VERSION + '-data'
 const IMAGE_CACHE = CACHE_PREFIX + 'images-v1'
-const APP_FILES = ["/", "/manifest.webmanifest", "/icon.svg", "/assets/index-DH5X0C1G.css", "/assets/index-_r6RdUK1.js"]
+const APP_FILES = ["/", "/manifest.webmanifest", "/icon.svg", "/assets/index-DH5X0C1G.css", "/assets/index-DxZLDL1T.js"]
 
 function scopedUrl(path) {
   return new URL(path.replace(/^\/+/, ''), self.registration.scope).href
@@ -12,9 +11,7 @@ function scopedUrl(path) {
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(APP_CACHE)
-      .then(cache => cache.addAll(APP_FILES.map(scopedUrl)))
-      .then(() => caches.open(DATA_CACHE))
-      .then(cache => cache.addAll(['/data/cards.json', '/data/image-cache.json'].map(scopedUrl)))
+      .then(cache => cache.addAll(APP_FILES.map(path => new Request(scopedUrl(path), { cache: 'reload' }))))
       .then(() => self.skipWaiting()),
   )
 })
@@ -23,7 +20,7 @@ self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
       .then(keys => Promise.all(keys
-        .filter(key => key.startsWith(CACHE_PREFIX) && ![APP_CACHE, DATA_CACHE, IMAGE_CACHE].includes(key))
+        .filter(key => key.startsWith(CACHE_PREFIX) && key.endsWith('-app') && key !== APP_CACHE)
         .map(key => caches.delete(key))))
       .then(() => self.clients.claim()),
   )
@@ -67,11 +64,11 @@ self.addEventListener('fetch', event => {
   if (!url.pathname.startsWith(scopePath)) return
   const path = '/' + url.pathname.slice(scopePath.length)
   if (request.mode === 'navigate') {
-    event.respondWith(networkFirst(request, APP_CACHE).catch(() => caches.match(scopedUrl('/'))))
+    event.respondWith(caches.match(scopedUrl('/'), { cacheName: APP_CACHE }).then(cached => cached || networkFirst(request, APP_CACHE)))
     return
   }
-  if (path === '/data/cards.json' || path === '/data/image-cache.json') {
-    event.respondWith(networkFirst(request, DATA_CACHE))
+  if (path === '/data/image-cache.json') {
+    event.respondWith(networkFirst(request, APP_CACHE))
     return
   }
   if (path.startsWith('/card-images/')) {
